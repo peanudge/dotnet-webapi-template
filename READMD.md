@@ -12,3 +12,9 @@ Create Northwind.db file
 $ sqlite3 Northwind.db < ./data/NorthwindSeed.sql
 ```
 
+
+# EF Core data provider
+
+EF Core data providers are sets of classes that are optimized for a specific data store.
+
+> dotnet add package Microsoft.EntityFrameworkCore.Sqlite
