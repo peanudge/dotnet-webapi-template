@@ -3,8 +3,6 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using static System.Console;
-
 namespace Packt.Shared;
 
 
@@ -37,6 +35,7 @@ public class NorthwindController : ControllerBase
     public IActionResult GetProducts(decimal price = 0)
     {
         IOrderedEnumerable<Product> prods = _context.Products
+            .TagWith("Products filtered by price and sorted.")
             .AsEnumerable()
             .Where(product => product.Cost > price)
             .OrderByDescending(product => product.Cost);
@@ -54,4 +53,16 @@ public class NorthwindController : ControllerBase
         return Ok(result);
     }
 
+
+    [HttpGet("product")]
+    public IActionResult GetProduct(string keyword)
+    {
+        var stringBuilder = new StringBuilder();
+        IQueryable<Product> prods = _context.Products.Where(p => EF.Functions.Like(p.ProductName!, $"%{keyword}%"));
+        foreach (Product item in prods)
+        {
+            stringBuilder.AppendFormat("{0} has {1} units in stock. Discontinued? {2}\n", item.ProductName, item.Stock, item.Discontinued);
+        }
+        return Ok(stringBuilder.ToString());
+    }
 }
