@@ -1,13 +1,17 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Packt.Shared;
 
 public class NorthwindContext : DbContext
 {
+
     public DbSet<Product> Products { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
+
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -15,6 +19,10 @@ public class NorthwindContext : DbContext
             Environment.CurrentDirectory, "Northwind.db"
         );
         optionsBuilder.UseSqlite($"Filename={path}");
+
+        optionsBuilder.LogTo(msg => Debug.WriteLine(msg),
+             new[] { DbLoggerCategory.Database.Command.Name },
+             LogLevel.Information);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
