@@ -1,7 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Packt.Shared;
 
@@ -18,7 +19,9 @@ public class NorthwindContext : DbContext
         string path = Path.Combine(
             Environment.CurrentDirectory, "Northwind.db"
         );
-        optionsBuilder.UseSqlite($"Filename={path}");
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseSqlite($"Filename={path}");
 
         optionsBuilder.LogTo(msg => Debug.WriteLine(msg),
              new[] { DbLoggerCategory.Database.Command.Name },
@@ -74,4 +77,26 @@ public class Product
     {
         get; set;
     }
+}
+
+public class ProductToUpdate
+{
+    public int CategoryID { get; set; }
+    public string? ProductName { get; set; }
+    public decimal? Cost { get; set; }
+}
+
+public class ProductDTO
+{
+    public int ProductID { get; set; }
+
+    public string? ProductName { get; set; }
+
+    public decimal? Cost { get; set; }
+
+    public short? Stock { get; set; }
+
+    public bool Discontinued { get; set; }
+
+    public int CategoryId { get; set; }
 }
