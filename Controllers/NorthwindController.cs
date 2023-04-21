@@ -84,14 +84,7 @@ public class NorthwindController : ControllerBase
         _context.Products.Add(newProduct);
 
         int affected = _context.SaveChanges();
-        if (affected == 1)
-        {
-            return Ok();
-        }
-        else
-        {
-            return BadRequest();
-        }
+        return affected == 1 ? Ok() : BadRequest();
     }
 
 
@@ -110,6 +103,20 @@ public class NorthwindController : ControllerBase
         int affected = _context.SaveChanges();
 
         return affected == 1 ? Ok() : BadRequest("Fail");
+    }
+
+    [HttpDelete]
+    public IActionResult DeleteProducts(string name)
+    {
+        IEnumerable<Product> products = _context.Products.Where(
+            p => p.ProductName!.StartsWith(name)
+        );
+
+        _context.Products.RemoveRange(products);
+
+        int affected = _context.SaveChanges();
+
+        return Ok($"Removed {affected} counts");
     }
 
     private static ProductDTO ProductToDTO(Product product) =>
